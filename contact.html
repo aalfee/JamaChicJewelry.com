@@ -18,7 +18,8 @@
 	<section id="contact">
 		<h2>Get in Touch!</h2>
 		<p>Feel free to contact us!</p>
-		<form action="submit_form.php" method="post"> <!-- Fixed attributes -->
+		<script src="https://www.google.com/recaptcha/api.js"></script>
+		<form action="submit_form.php" method="post" id="contact-form"> <!-- Fixed attributes -->
 			<div class="form-group">
 				<label for="name">Name:</label>
 				<input type="text" id="name" name="name" required><br>
@@ -35,9 +36,52 @@
 				<label for="message">Message:</label>
 				<textarea id="message" name="message" required></textarea><br> <!-- Changed to textarea -->
 			</div>
-			<button type="submit">Send Message</button><br>
+			<button class="g-recaptcha" type="submit" data-sitekey="6LdHf7gqAAAAAJBjtZ7bMeqUjh0P2qaa2O-KxH2_" data-callback='onRecaptchaSuccess'>Send Message</button><br>
 		</form>
 	</section>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/validate.js/0.13.1/validate.min.js"></script>
+  <script>
+      const constraints = {
+          name: {
+              presence: {allowEmpty: false}
+          },
+          email: {
+              presence: {allowEmpty: false},
+              email: true
+          },
+          message: {
+              presence: {allowEmpty: false}
+          }
+      };
+
+      const form = document.getElementById('contact-form');
+
+      form.addEventListener('submit', function (event) {
+          const formValues = {
+              name: form.elements.name.value,
+              email: form.elements.email.value,
+              message: form.elements.message.value
+          };
+
+          const errors = validate(formValues, constraints);
+
+          if (errors) {
+              event.preventDefault();
+              const errorMessage = Object
+                  .values(errors)
+                  .map(function (fieldValues) {
+                      return fieldValues.join(', ')
+                  })
+                  .join("\n");
+
+              alert(errorMessage);
+          }
+      }, false);
+
+      function onRecaptchaSuccess () {
+          document.getElementById('contact-form').submit()
+      }
+  </script>
 	<script type="module" src="/contactBackground.js"></script>
 </body>
 </html>
